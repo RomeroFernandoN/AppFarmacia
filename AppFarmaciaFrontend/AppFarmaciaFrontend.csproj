@@ -1,0 +1,58 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.3-beta1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AppFarmaciaBackend\AppFarmaciaBackend.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Formularios\ConsultaFacturas.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Formularios\ConsultarEntregas.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Formularios\InsertarInsumos.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Formularios\Menu.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Formularios\ModificarEntrega.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Formularios\ModificarFacturas.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Formularios\RegistroEntregas.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Formularios\RegistroFacturas.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,592 @@
+create database Farmacia
+use farmacia
+
+--PROVINCIAS
+create table Provincias
+(id_Provincia int,
+provincia varchar(50),
+constraint pk_Provincia primary key(id_Provincia))
+
+insert into Provincias
+values (1,'Córdoba')
+
+--LOCALIDADES
+create table Localidades
+(id_Localidad int,
+localidad varchar(50),
+id_Provincia int,
+constraint pk_Localidad primary key(id_Localidad),
+constraint fk_Localidad_Provincia foreign key(id_Provincia)
+references Provincias(id_Provincia))
+
+insert into Localidades
+values ( 1, 'Córdoba', 1), (2, 'Río Cuarto', 1), (3, 'Villa María', 1)
+
+--BARRIOS
+create table Barrios
+(id_Barrio int,
+barrio varchar(50),
+id_Localidad int,
+constraint pk_Barrio primary key(id_Barrio),
+constraint fk_BarrioLocalidad foreign key(id_Localidad)
+references Localidades(id_Localidad))
+
+insert into Barrios
+values ( 1, 'Nueva Córdoba', 1), (2, 'General Paz', 2), (3, 'San Martín',3)
+
+--SUCURSALES
+create table Sucursales
+(id_Sucursal int,
+nombre varchar(50),
+telefono int,
+id_Barrio int
+constraint pk_Sucursales primary key(id_Sucursal),
+constraint fk_Sucursal_Barrio foreign key(id_Barrio) references Barrios(id_Barrio))
+
+insert into Sucursales
+values ( 1, 'Suc. Nueva Córdoba', 4943322, 1), (2, 'Suc. General Paz', 4934499, 2), (3, 'Suc. San Martín', 4927766, 3)
+
+--EMPLEADO SUC
+create table Empleados_Suc
+(id_EmpleadoSuc int,
+nombre varchar(50),
+apellido varchar(50),
+id_Sucursal int,
+constraint pk_EmpleadoSuc primary key(id_EmpleadoSuc),
+constraint fk_EmpleadoSuc_Sucursal foreign key(id_Sucursal)
+references Sucursales(id_Sucursal))
+
+insert into Empleados_Suc
+values ( 1, 'Juan', 'Ramírez', 1), ( 2, 'Pablo', 'Pérez', 1), ( 3, 'Matias', 'Rodríguez', 2),( 4, 'Martín', 'Toledo', 2), ( 5, 'José', 'López', 3), ( 6, 'Franco', 'Martínez', 2)
+
+--TIPOS DE INSUMOS
+create table Tipos_Insumos
+(id_TipoInsumo int,
+nombre varchar(50),
+constraint pk_TipoInsumos primary key(id_TipoInsumo))
+
+insert into Tipos_Insumos
+values (1, 'Belleza'), (2, 'Salud'), (3, 'Bebés'), (4, 'Dermocosmética')
+
+--INSUMOS
+create table Insumos
+(id_Insumo int,
+insumo varchar(50),
+venta_libre bit,
+pre_unitario money,
+id_TipoInsumo int
+constraint pk_Insumos primary key(id_Insumo),
+constraint fk_Insumos_TipoInsumos foreign key(id_TipoInsumo) references Tipos_Insumos(id_TipoInsumo))
+
+insert into Insumos
+values (1, 'Paracetamol ISA X30 Comprimidos', 1, 500, 2), (2, 'Tafirol Plus X 16 Capsulas', 1, 1000, 2), (3, 'Ibu 400 Plus X 10 Comprimidos', 1, 1500, 2)
+
+--OBRA SOCIAL
+create table Obra_Social
+(id_ObraSocial int,
+nombre varchar(50)
+constraint pk_ObraSoc primary key(id_ObraSocial))
+
+insert into Obra_Social
+values (1, 'Medicus'), (2, 'Galeno'), (3, 'Swiss Medical')
+
+--CLIENTES
+create table Clientes
+(id_Cliente int identity(1,1),
+nombre varchar(50),
+apellido varchar(50),
+documento varchar(20),
+constraint pkCliente primary key(id_Cliente))
+
+insert into Clientes 
+values ('Guillermo', 'Rolón', 41322919), ('Fabrizio', 'Olmedo', 28678330), ('Joaquin', 'Patricios', 34563223)
+
+--RECETAS
+create table Recetas
+(id_Receta int,
+nom_Medico varchar(50),
+ape_Medico varchar(50),
+matricula_Medico int,
+diagnostico varchar(200),
+id_Insumo int,
+constraint pk_Recetas primary key(id_Receta),
+constraint fk_Receta_Insumo foreign key(id_Insumo) references Insumos(id_Insumo))
+
+--ENTREGAS
+create table Entregas
+(id_Entrega int, 
+id_Sucursal int,
+fecha datetime,
+empleado_Log varchar(100),
+id_EmpleadoSuc int,
+constraint pk_Entregas primary key(id_Entrega),
+constraint fk_Entrega_Sucursal foreign key(id_Sucursal) references Sucursales(id_Sucursal),
+constraint fk_Entrega_EmpleadoSuc foreign key(id_EmpleadoSuc) references Empleados_Suc(id_EmpleadoSuc))
+
+--DETALLES DE ENTREGA
+create table Detalles_Entrega
+(id_DetalleEntrega int,
+id_Insumo int,
+id_Entrega int,
+cantidad int,
+constraint pk_DetalleEnt primary key(id_DetalleEntrega),
+constraint fk_DetEntrega_Insumos foreign key(id_Insumo) references Insumos(id_Insumo),
+constraint fk_DetEntrega_Entrega foreign key(id_Entrega) references Entregas(id_Entrega))
+
+--FACTURAS
+create table Facturas
+(id_Factura int,
+id_Sucursal int,
+id_Cliente int,
+fecha datetime,
+id_EmpleadoSuc int
+constraint pk_Factura primary key(id_Factura),
+constraint fk_FactSuc foreign key(id_Sucursal) references Sucursales(id_Sucursal),
+constraint fk_FactClientes foreign key(id_Cliente) references Clientes(id_Cliente),
+constraint fk_Factura_EmpleadoSuc foreign key(id_EmpleadoSuc) references Empleados_Suc(id_EmpleadoSuc))
+
+--DETALLE FACTURAS
+create table Detalles_Facturas
+(id_DetFactura int,
+id_Factura int,
+id_Receta int,
+id_Insumo int,
+cantidad int,
+precio money,
+id_ObraSocial int,
+constraint pk_DetFact primary key(id_DetFactura),
+constraint fk_DetFact_Factura foreign key(id_Factura) references Facturas(id_Factura),
+constraint fk_DetFact_Receta foreign key(id_Receta) references Recetas(id_Receta),
+constraint fk_DetFact_Insumos foreign key(id_Insumo) references Insumos(id_Insumo),
+constraint fk_DetFact_ObraSoc foreign key(id_ObraSocial) references Obra_Social(id_ObraSocial))
+
+insert into Facturas
+values(1,1,1,getdate(),1)
+
+insert into Recetas
+values(1, 'Medico1','Medico1',39,'Nosabe',1)
+
+insert into Detalles_Facturas
+values(1,1,1,1,10,20,1)
+
+insert into Entregas
+values (1,1,getdate(),'Empleado1',1)
+
+insert into Detalles_Entrega
+values (1,1,1,20)
+
+--CARGOS
+create table cargos
+(id_Cargo int,
+Cargo varchar(100)
+constraint pk_cargos primary key(id_Cargo))
+
+insert into cargos
+values (1, 'Administrador'),(2, 'Vendedor'),(3, 'Cliente')
+
+create table usuarios
+(id_Usuario int,
+Cargo int,
+Usuario varchar(50),
+Contraseña varchar(50)
+constraint pk_Usuarios primary key(id_Usuario),
+constraint fk_Usuarios_cargos foreign key(Cargo) references cargos(id_cargo))
+
+insert into usuarios
+values (1, 1, 'RomeroFernando','RomeroFernando')
+
+--PROCEDIMIENTOS ALMACENADOS
+--Procedimiento almacenados de sucursales
+CREATE PROCEDURE SP_CONSULTAR_SUCURSALES
+AS
+BEGIN
+SELECT *FROM SUCURSALES
+END
+--Procedimiento almacenados de empleados
+CREATE PROCEDURE SP_CONSULTAR_EMPLEADOS
+AS
+BEGIN
+SELECT *FROM Empleados_Suc
+END
+--Procedimiento almacenados de tipos de insumos
+CREATE PROCEDURE SP_CONSULTAR_TIPOS_INSUMOS
+AS
+SELECT *FROM TIPOS_INSUMOS
+--Procedimientos almacenados de insumos
+CREATE PROCEDURE SP_PROXIMO_INSUMO
+@NRO_INSUMO INT OUTPUT
+AS
+BEGIN
+	SET @NRO_INSUMO = (SELECT MAX(ID_INSUMO)+1  FROM INSUMOS);
+END
+
+CREATE PROCEDURE SP_CONSULTAR_INSUMOS
+AS
+BEGIN
+SELECT *FROM INSUMOS
+END
+
+CREATE PROCEDURE SP_CONSULTAR_INSUMOS_ID
+@ID_INSUMO INT
+AS
+BEGIN
+SELECT *FROM INSUMOS WHERE ID_INSUMO = @ID_INSUMO
+END
+
+CREATE PROCEDURE SP_BUSCAR_INSUMO
+@NOMBRE VARCHAR(100),
+@ID INT OUTPUT
+AS
+SET @ID = (SELECT ID_INSUMO FROM INSUMOS WHERE INSUMO = @NOMBRE)
+IF(@ID IS NULL)
+SET @ID = 0
+
+CREATE PROCEDURE SP_INSERTAR_INSUMO
+@ID INT,
+@NOMBRE VARCHAR(50),
+@TIPO_VENTA BIT,
+@PRECIO DECIMAL(10,2),
+@TIPO_INSUMO INT
+AS
+BEGIN
+INSERT INTO INSUMOS 
+VALUES (@ID, @NOMBRE, @TIPO_VENTA, @PRECIO, @TIPO_INSUMO)
+END
+
+CREATE PROCEDURE SP_MODIFICAR_INSUMO
+@ID INT,
+@NOMBRE VARCHAR(50),
+@TIPO_VENTA BIT,
+@PRECIO DECIMAL(10,2),
+@TIPO_INSUMO INT
+AS
+BEGIN
+UPDATE INSUMOS 
+SET INSUMO = @NOMBRE, VENTA_LIBRE = @TIPO_VENTA, PRE_UNITARIO= @PRECIO, ID_TIPOINSUMO = @TIPO_INSUMO
+WHERE ID_INSUMO = @ID
+END
+
+CREATE PROCEDURE SP_DAR_BAJA
+@ID INT
+AS
+DELETE INSUMOS
+WHERE ID_INSUMO = @ID
+--Procedimiento almacenados de obras sociales
+CREATE PROCEDURE SP_CONSULTAR_OBRAS_SOCIALES
+AS
+BEGIN
+SELECT *FROM Obra_Social
+END
+--Procedimiento almacenados de clientes
+CREATE PROCEDURE SP_PROXIMO_CLIENTE
+@NRO_CLIENTE INT OUTPUT
+AS
+BEGIN
+	SET @NRO_CLIENTE = (SELECT MAX(ID_CLIENTE)+1  FROM CLIENTES);
+END
+
+CREATE PROCEDURE SP_EXISTE_CLIENTE
+@NOMBRE VARCHAR(100),
+@APELLIDO VARCHAR(100),
+@DOCUMENTO INT,
+@ID INT OUTPUT
+AS
+BEGIN
+DECLARE @CANTIDAD INT
+SELECT @CANTIDAD = COUNT(ID_CLIENTE)
+FROM CLIENTES
+WHERE NOMBRE = @NOMBRE AND APELLIDO = @APELLIDO AND DOCUMENTO = @DOCUMENTO
+IF(@CANTIDAD = 1)
+SET @ID = (SELECT ID_CLIENTE
+FROM CLIENTES
+WHERE NOMBRE = @NOMBRE AND APELLIDO = @APELLIDO AND DOCUMENTO = @DOCUMENTO)
+ELSE
+SET @ID = 0;
+END
+
+CREATE PROCEDURE SP_INSERTAR_CLIENTE
+@NOMBRE VARCHAR(50),
+@APELLIDO VARCHAR(50),
+@DOCUMENTO INT,
+@ID INT OUTPUT
+AS
+BEGIN
+INSERT INTO CLIENTES
+VALUES (@NOMBRE, @APELLIDO, @DOCUMENTO)
+SET @ID = SCOPE_IDENTITY();
+END
+--Procedimiento almacenados de receta
+CREATE PROCEDURE SP_PROXIMA_RECETA
+@NRO_RECETA INT OUTPUT
+AS
+BEGIN
+	SET @NRO_RECETA = (SELECT MAX(ID_RECETA)+1  FROM RECETAS);
+END
+
+CREATE PROCEDURE SP_INSERTAR_RECETA
+@ID_RECETA INT,
+@NOM_MEDICO VARCHAR(50),
+@APE_MEDICO VARCHAR(50),
+@MATRICULA_MEDICO INT,
+@DIAGNOSTICO VARCHAR(200),
+@ID_INSUMO INT
+AS
+BEGIN
+INSERT INTO RECETAS
+VALUES ( @ID_RECETA, @NOM_MEDICO , @APE_MEDICO, @MATRICULA_MEDICO, @DIAGNOSTICO, @ID_INSUMO)
+END
+--Procedimientos almacenados de entregas
+CREATE PROCEDURE  SP_CONSULTAR_ENTREGA_ID
+@ID_ENTREGA INT
+AS
+SELECT  ID_ENTREGA,
+	ES.NOMBRE NOMBRE_EMPLEADO,
+	ES.APELLIDO APELLIDO_EMPLEADO,
+	ES.ID_EMPLEADOSUC,
+	E.ID_SUCURSAL,
+	EMPLEADO_LOG,
+	FECHA 
+FROM ENTREGAS E JOIN EMPLEADOS_SUC ES
+     ON E.ID_EMPLEADOSUC = ES.ID_EMPLEADOSUC
+WHERE E.ID_ENTREGA = @ID_ENTREGA
+
+CREATE PROCEDURE SP_CONSULTAR_ENTREGAS
+@DESDE DATETIME,
+@HASTA DATETIME
+AS
+SELECT  ID_ENTREGA,
+		ES.NOMBRE NOMBRE_EMPLEADO,
+		ES.APELLIDO APELLIDO_EMPLEADO,
+		ES.ID_EMPLEADOSUC,
+		E.ID_SUCURSAL,
+		EMPLEADO_LOG,
+		FECHA 
+FROM ENTREGAS E JOIN EMPLEADOS_SUC ES
+     ON E.ID_EMPLEADOSUC = ES.ID_EMPLEADOSUC
+WHERE FECHA BETWEEN @DESDE AND @HASTA
+
+CREATE PROCEDURE SP_PROXIMA_ENTREGA
+@NRO_ENTREGA INT OUTPUT
+AS
+BEGIN
+	SET @NRO_ENTREGA = (SELECT MAX(ID_ENTREGA)+1  FROM ENTREGAS);
+END
+
+CREATE PROCEDURE SP_INSERTAR_ENTREGA
+@ID_ENTREGA INT,
+@ID_SUCURSAL INT,
+@FECHA DATETIME,
+@EMPLEADO_LOG VARCHAR(100),
+@ID_EMPLEADO INT
+AS
+BEGIN
+INSERT INTO ENTREGAS
+VALUES ( @ID_ENTREGA , @ID_SUCURSAL, @FECHA, @EMPLEADO_LOG, @ID_EMPLEADO)
+END
+
+CREATE PROCEDURE SP_MODIFICA_ENTREGA
+@ID INT,
+@FECHA DATETIME
+AS
+UPDATE ENTREGAS
+SET FECHA = @FECHA
+WHERE ID_ENTREGA = @ID
+
+CREATE PROCEDURE SP_ELIMINAR_ENTREGA
+@ID INT
+AS
+DELETE DETALLES_ENTREGA
+WHERE ID_ENTREGA = @ID
+DELETE ENTREGAS
+WHERE ID_ENTREGA = @ID
+--Procedimiento almacenados de detalles entrega
+CREATE PROCEDURE SP_CONSULTAR_DETALLES_ENTREGA
+@ID INT
+AS
+SELECT DE.ID_INSUMO ID_INSUMO, 
+       I.INSUMO INSUMO,
+       VENTA_LIBRE VENTA,
+       I.ID_TIPOINSUMO TIPOINSUMO,
+       DE.CANTIDAD CANTIDAD
+FROM DETALLES_ENTREGA DE JOIN INSUMOS I
+     ON DE.ID_INSUMO = I.ID_INSUMO
+WHERE ID_ENTREGA = @ID 
+
+CREATE PROCEDURE SP_PROXIMO_DETALLE_ENTREGA
+@NRO_DETALLE INT OUTPUT
+AS
+BEGIN
+	SET @NRO_DETALLE = (SELECT MAX(ID_DETALLEENTREGA)+1  FROM DETALLES_ENTREGA);
+END
+
+CREATE PROCEDURE SP_INSERTAR_DETALLE_ENTREGA
+@ID_DETALLEENTREGA INT,
+@ID_INSUMO INT,
+@ID_ENTREGA INT,
+@CANTIDAD INT
+AS
+BEGIN
+INSERT INTO DETALLES_ENTREGA
+VALUES (@ID_DETALLEENTREGA , @ID_INSUMO , @ID_ENTREGA , @CANTIDAD)
+END
+
+CREATE PROCEDURE SP_ELIMINAR_DETALLES_ENTREGA
+@ID INT
+AS
+DELETE DETALLES_ENTREGA
+WHERE ID_ENTREGA = @ID
+--Procedimientos almacenados de facturas
+CREATE PROCEDURE SP_CONSULTAR_FACTURAS
+@DESDE DATETIME,
+@HASTA DATETIME
+AS
+SELECT  F.ID_FACTURA ID_FACTURA,
+	C.NOMBRE NOMBRE_CLIENTE,
+	C.APELLIDO APELLIDO_CLIENTE,
+	C.DOCUMENTO DOCUMENTO,
+	F.ID_SUCURSAL ID_SUCURSAL,
+	F.FECHA FECHA,
+        SUM(DF.CANTIDAD * DF.PRECIO) IMPORTE,
+        ES.NOMBRE NOMBRE_EMPLEADO,
+	ES.APELLIDO APELLIDO_EMPLEADO,
+	ES.ID_EMPLEADOSUC
+FROM FACTURAS F JOIN DETALLES_FACTURAS DF
+     ON F.ID_FACTURA = DF.ID_FACTURA
+     JOIN CLIENTES C
+     ON F.ID_CLIENTE = C.ID_CLIENTE 
+     JOIN EMPLEADOS_SUC ES
+     ON F.ID_EMPLEADOSUC = ES.ID_EMPLEADOSUC
+WHERE F.FECHA BETWEEN @DESDE AND @HASTA
+GROUP BY    F.ID_FACTURA,
+			C.NOMBRE,
+			C.APELLIDO,
+			C.DOCUMENTO,
+			F.ID_SUCURSAL,
+			F.FECHA,
+			ES.NOMBRE,
+			ES.APELLIDO,
+			ES.ID_EMPLEADOSUC
+
+CREATE PROCEDURE SP_CONSULTAR_FACTURA_ID
+@ID_FACTURA INT
+AS
+SELECT  F.ID_FACTURA ID_FACTURA,
+	C.NOMBRE NOMBRE_CLIENTE,
+	C.APELLIDO APELLIDO_CLIENTE,
+	C.DOCUMENTO DOCUMENTO,
+	F.ID_SUCURSAL ID_SUCURSAL,
+	F.FECHA FECHA,
+        SUM(DF.CANTIDAD * DF.PRECIO) IMPORTE,
+        ES.NOMBRE NOMBRE_EMPLEADO,
+	ES.APELLIDO APELLIDO_EMPLEADO,
+	ES.ID_EMPLEADOSUC
+FROM FACTURAS F JOIN DETALLES_FACTURAS DF
+     ON F.ID_FACTURA = DF.ID_FACTURA
+     JOIN CLIENTES C
+     ON F.ID_CLIENTE = C.ID_CLIENTE 
+     JOIN EMPLEADOS_SUC ES
+     ON F.ID_EMPLEADOSUC = ES.ID_EMPLEADOSUC
+GROUP BY    F.ID_FACTURA,
+			C.NOMBRE,
+			C.APELLIDO,
+			C.DOCUMENTO,
+			F.ID_SUCURSAL,
+			F.FECHA,
+			ES.NOMBRE,
+			ES.APELLIDO,
+			ES.ID_EMPLEADOSUC
+
+CREATE PROCEDURE SP_PROXIMA_FACTURA
+@NRO_FACTURA INT OUTPUT
+AS
+BEGIN
+	SET @NRO_FACTURA = (SELECT MAX(ID_FACTURA)+1  FROM FACTURAS);
+END
+
+CREATE PROCEDURE SP_INSERTAR_FACTURA
+@ID_FACTURA INT,
+@ID_SUCURSAL INT,
+@ID_CLIENTE INT,
+@FECHA DATETIME,
+@ID_EMPLEADO INT
+AS
+BEGIN
+INSERT INTO FACTURAS
+VALUES ( @ID_FACTURA , @ID_SUCURSAL, @ID_CLIENTE, @FECHA, @ID_EMPLEADO)
+END
+
+CREATE PROCEDURE SP_MODIFICA_FACTURA
+@ID INT,
+@FECHA DATETIME
+AS
+UPDATE FACTURAS
+SET FECHA = @FECHA
+WHERE ID_FACTURA = @ID
+
+CREATE PROCEDURE SP_ELIMINAR_FACTURA
+@ID INT
+AS
+DELETE DETALLES_FACTURAS
+WHERE ID_FACTURA = @ID
+DELETE DETALLES_FACTURAS
+WHERE ID_FACTURA = @ID
+DELETE FACTURAS
+WHERE ID_FACTURA = @ID
+--Procedimientos almacenados de detalles facturas
+CREATE PROCEDURE SP_CONSULTAR_DETALLES_FACTURA
+@ID INT
+AS
+SELECT DF.ID_INSUMO ID_INSUMO, 
+       I.INSUMO INSUMO,
+       VENTA_LIBRE VENTA,
+       I.ID_TIPOINSUMO TIPOINSUMO,
+       DF.PRECIO PRECIO,
+       DF.CANTIDAD CANTIDAD
+FROM DETALLES_FACTURAS DF JOIN INSUMOS I
+     ON DF.ID_INSUMO = I.ID_INSUMO
+WHERE ID_FACTURA = @ID 
+
+CREATE PROCEDURE SP_PROXIMO_DETALLE_FACTURA
+@NRO_DETALLE INT OUTPUT
+AS
+BEGIN
+	SET @NRO_DETALLE = (SELECT MAX(ID_DETFACTURA)+1  FROM DETALLES_FACTURAS);
+END
+
+CREATE PROCEDURE SP_INSERTAR_DETALLE_FACTURA
+@ID_DETFACTURA INT,
+@ID_FACTURA INT,
+@ID_RECETA INT,
+@ID_INSUMO INT,
+@CANTIDAD INT,
+@PRECIO MONEY,
+@ID_OBRASOCIAL INT
+AS
+BEGIN
+INSERT INTO DETALLES_FACTURAS (ID_DETFACTURA, ID_FACTURA, ID_INSUMO, CANTIDAD, PRECIO, ID_OBRASOCIAL, ID_RECETA)
+VALUES ( @ID_DETFACTURA , @ID_FACTURA , @ID_INSUMO , @CANTIDAD , @PRECIO , @ID_OBRASOCIAL, @ID_RECETA)
+END
+
+CREATE PROCEDURE SP_ELIMINAR_DETALLES_FACTURA
+@ID INT
+AS
+DELETE DETALLES_FACTURAS
+WHERE ID_FACTURA = @ID
+--Procedimiento almacenados inicio de sesion
+CREATE PROCEDURE SP_INICIO_SESION
+@CARGO INT,
+@USUARIO VARCHAR(50),
+@CONTRASEÑA VARCHAR(50),
+@RESULTADO INT OUTPUT
+AS
+BEGIN
+DECLARE @CANTIDAD INT
+SELECT @CANTIDAD = COUNT(ID_USUARIO) FROM USUARIOS 
+WHERE CARGO = @CARGO AND 
+      USUARIO = @USUARIO AND
+      CONTRASEÑA = @CONTRASEÑA
+IF(@CANTIDAD  = 1)
+SET @RESULTADO = 1
+ELSE
+SET @RESULTADO = 0
+END

@@ -1,0 +1,12 @@
+D:\Bibliotecas\Desktop\Segundocuatrimestre\Programacion\AppFarmaciaBackend\obj\Debug\net6.0\AppFarmaciaBackend.csproj.AssemblyReference.cache
+D:\Bibliotecas\Desktop\Segundocuatrimestre\Programacion\AppFarmaciaBackend\obj\Debug\net6.0\AppFarmaciaBackend.GeneratedMSBuildEditorConfig.editorconfig
+D:\Bibliotecas\Desktop\Segundocuatrimestre\Programacion\AppFarmaciaBackend\obj\Debug\net6.0\AppFarmaciaBackend.AssemblyInfoInputs.cache
+D:\Bibliotecas\Desktop\Segundocuatrimestre\Programacion\AppFarmaciaBackend\obj\Debug\net6.0\AppFarmaciaBackend.AssemblyInfo.cs
+D:\Bibliotecas\Desktop\Segundocuatrimestre\Programacion\AppFarmaciaBackend\obj\Debug\net6.0\AppFarmaciaBackend.csproj.CoreCompileInputs.cache
+D:\Bibliotecas\Desktop\Segundocuatrimestre\Programacion\AppFarmaciaBackend\bin\Debug\net6.0\AppFarmaciaBackend.deps.json
+D:\Bibliotecas\Desktop\Segundocuatrimestre\Programacion\AppFarmaciaBackend\bin\Debug\net6.0\AppFarmaciaBackend.dll
+D:\Bibliotecas\Desktop\Segundocuatrimestre\Programacion\AppFarmaciaBackend\bin\Debug\net6.0\AppFarmaciaBackend.pdb
+D:\Bibliotecas\Desktop\Segundocuatrimestre\Programacion\AppFarmaciaBackend\obj\Debug\net6.0\AppFarmaciaBackend.dll
+D:\Bibliotecas\Desktop\Segundocuatrimestre\Programacion\AppFarmaciaBackend\obj\Debug\net6.0\refint\AppFarmaciaBackend.dll
+D:\Bibliotecas\Desktop\Segundocuatrimestre\Programacion\AppFarmaciaBackend\obj\Debug\net6.0\AppFarmaciaBackend.pdb
+D:\Bibliotecas\Desktop\Segundocuatrimestre\Programacion\AppFarmaciaBackend\obj\Debug\net6.0\ref\AppFarmaciaBackend.dll
